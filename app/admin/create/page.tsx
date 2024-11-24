@@ -5,9 +5,12 @@ import { Label } from "@radix-ui/react-label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import Image from "next/image";
+import dynamic from "next/dynamic";
+
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
+
 import { createPost } from "@/actions/post";
 
 function CreatePostPage() {
@@ -34,7 +37,7 @@ function CreatePostPage() {
     formData.append("title", title);
     formData.append("description", description);
     formData.append("details", details);
-    if (image) formData.append("image", image); // Append image only if present
+    if (image) formData.append("image", image);
 
     try {
       await createPost(formData);
