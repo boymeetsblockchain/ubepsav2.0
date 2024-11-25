@@ -80,16 +80,6 @@ export const Navbar = () => {
             )}
           </ul>
 
-          <div className="sm:hidden md:block">
-            <Avatar>
-              {session?.user.image ? (
-                <AvatarImage src={session?.user.image} />
-              ) : (
-                <AvatarImage src="/user.jpg" />
-              )}
-              <AvatarFallback>UB</AvatarFallback>
-            </Avatar>
-          </div>
           <div className="flex flex-row-reverse gap-x-5 items-center md:hidden space-x-4">
             <AlignJustify
               size={24}
