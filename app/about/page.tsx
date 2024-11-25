@@ -81,8 +81,8 @@ const AboutPage = () => {
             Current Administration
           </h2>
           <p className="text-gray-700 leading-relaxed">
-            The 7th administration, led by Comr. Durojaye Bayode, has achieved
-            significant milestones, including passing the MRTBN and NUC
+            The 7th administration, led by Comr. Edebor Osamudiamen, has
+            achieved significant milestones, including passing the MRTBN and NUC
             accreditation tests and hosting intellectual events like
             inter-departmental debate competitions.
           </p>

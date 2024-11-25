@@ -19,8 +19,10 @@ import { registerSchema } from "@/utils/register-validator";
 import { registerUser } from "@/actions/user";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { ClipLoader } from "react-spinners";
 function RegisterPage() {
   const [message, setMessage] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
@@ -32,6 +34,7 @@ function RegisterPage() {
   });
 
   const onSubmit = async (data: z.infer<typeof registerSchema>) => {
+    setLoading(true);
     const formdata = new FormData();
     formdata.append("username", data.username);
     formdata.append("email", data.email);
@@ -47,17 +50,20 @@ function RegisterPage() {
       );
 
       router.push("/login");
+      setLoading(false);
     }
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4 py-8">
+    <div className="flex items-center justify-center h-auto bg-gray-100 px-4 py-8">
       <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-8">
         <h2 className="text-2xl font-bold text-center mb-6">
           Register to Get Started
         </h2>
         {message && (
-          <p className="text-center mb-4 text-red-500 font-medium">{message}</p>
+          <p className="text-center mb-4 text-blue-500 font-medium">
+            {message}
+          </p>
         )}
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -128,9 +134,10 @@ function RegisterPage() {
             />
             <Button
               type="submit"
-              className="border border-gray-500 bg-blue-500 text-white hover:bg-gray-700 hover:text-white transition-colors"
+              disabled={loading}
+              className=" bg-blue-500 text-white w-full hover:bg-gray-700 hover:text-white transition-colors"
             >
-              Submit
+              {loading ? <ClipLoader size={10} color="white" /> : " Submit"}
             </Button>
             <Link
               className="text-sm block hover:underline hover:text-blue-300"

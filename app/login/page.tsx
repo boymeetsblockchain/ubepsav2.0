@@ -19,11 +19,18 @@ import Link from "next/link";
 import { login } from "@/actions/user";
 import { useRouter } from "next/navigation";
 import { loginSchema } from "@/utils/login-validator";
+import { ClipLoader } from "react-spinners";
+import { useSession } from "next-auth/react";
 
 function SignUpPage() {
   const router = useRouter();
   const [message, setMessage] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
 
+  const { data: session } = useSession();
+  if (session) {
+    router.push("/");
+  }
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -34,7 +41,7 @@ function SignUpPage() {
 
   const onSubmit = async (data: z.infer<typeof loginSchema>) => {
     setMessage("");
-
+    setLoading(true);
     try {
       const formData = new FormData();
       formData.append("email", data.email);
@@ -46,6 +53,8 @@ function SignUpPage() {
         setMessage(response.error || "Login failed. Please try again.");
       } else {
         setMessage("Login successful! Redirecting...");
+        setLoading(true);
+        router.refresh();
         router.push("/");
       }
     } catch (error) {
@@ -54,7 +63,7 @@ function SignUpPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4 py-8">
+    <div className="flex items-center justify-center h-auto bg-gray-100 px-4 py-8">
       <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-8">
         <h2 className="text-2xl font-bold text-center mb-6">
           Login to Continue
@@ -107,9 +116,10 @@ function SignUpPage() {
             />
             <Button
               type="submit"
-              className="border border-gray-500 bg-blue-500 text-white hover:bg-gray-700 hover:text-white transition-colors"
+              disabled={loading}
+              className=" bg-blue-500 text-white w-full hover:bg-gray-700 hover:text-white transition-colors"
             >
-              Submit
+              {loading ? <ClipLoader size={10} color="white" /> : " Submit"}
             </Button>
             <Link
               className="text-sm block hover:underline hover:text-blue-300"

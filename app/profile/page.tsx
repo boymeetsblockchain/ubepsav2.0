@@ -9,7 +9,7 @@ import { User } from "@prisma/client";
 import { ClipLoader } from "react-spinners";
 import { Camera } from "lucide-react";
 import { Label } from "@/components/ui/label";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
 
 function ProfilePage() {
@@ -21,6 +21,10 @@ function ProfilePage() {
   const [loading, setLoading] = useState<boolean>(false);
 
   const { data: session } = useSession();
+
+  if (!session) {
+    redirect("/");
+  }
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -165,7 +169,7 @@ function ProfilePage() {
         {loading ? "Updating..." : "Update Profile"}
       </Button>
 
-      <Button className="" variant={"destructive"}>
+      <Button className="" variant={"destructive"} onClick={logout}>
         Logout
       </Button>
 

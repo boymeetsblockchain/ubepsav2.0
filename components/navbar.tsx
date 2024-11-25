@@ -5,17 +5,20 @@ import { useSession } from "next-auth/react";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "./ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useRouter } from "next/navigation";
 
 const menuItems = [
   { name: "Home", icon: Home, link: "/" },
-  { name: "About", icon: Info, link: "/about" },
   { name: "Blogs", icon: Briefcase, link: "/blog" },
+  { name: "About", icon: Info, link: "/about" },
+
   { name: "Contact", icon: Mail, link: "/contact" },
 ];
 export const Navbar = () => {
   const { data: session } = useSession();
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -67,24 +70,43 @@ export const Navbar = () => {
                 </li>
               </>
             )}
+
+            {session?.user.role == "ADMIN" && (
+              <>
+                <Button className="bg-ubepsa" asChild>
+                  <Link href={"/admin"}>Admin</Link>
+                </Button>
+              </>
+            )}
           </ul>
 
-          <div>
+          <div className="sm:hidden md:block">
             <Avatar>
               {session?.user.image ? (
                 <AvatarImage src={session?.user.image} />
               ) : (
-                <AvatarImage src="https://github.com/shadcn.png" />
+                <AvatarImage src="/user.jpg" />
               )}
-              <AvatarFallback>CN</AvatarFallback>
+              <AvatarFallback>UB</AvatarFallback>
             </Avatar>
           </div>
-          <div className="flex items-center md:hidden space-x-4">
+          <div className="flex flex-row-reverse gap-x-5 items-center md:hidden space-x-4">
             <AlignJustify
               size={24}
               className="md:hidden text-black  cursor-pointer"
               onClick={() => setIsOpen(!isOpen)}
             />
+            <Avatar
+              onClick={() => router.push("/profile")}
+              className="cursor-pointer"
+            >
+              {session?.user.image ? (
+                <AvatarImage src={session?.user.image} />
+              ) : (
+                <AvatarImage src="/user.jpg" />
+              )}
+              <AvatarFallback>UB</AvatarFallback>
+            </Avatar>
           </div>
         </div>
         <div
@@ -94,7 +116,7 @@ export const Navbar = () => {
         >
           <div
             ref={menuRef}
-            className={`absolute right-0 top-0 h-screen w-60 bg-white dark:bg-[#0C4860] shadow-lg z-50 transition-transform transform duration-300 login-out ${
+            className={`absolute right-0 top-0 min-h-svh w-60 bg-white dark:bg-[#0C4860] shadow-lg z-50 transition-transform transform duration-300 login-out ${
               isOpen ? "translate-x-0" : "translate-x-full"
             }`}
           >
@@ -121,6 +143,21 @@ export const Navbar = () => {
                 ))}
 
                 {/* Login/Signup for mobile menu */}
+                {session && (
+                  <div className=" p-3 rounded-lg shadow-md bg-gray-100 dark:bg-[#0b3d50] hover:shadow-lg transition-shadow duration-300">
+                    <div className="leading-4 flex flex-col space-y-2">
+                      <div className="flex items-center space-x-3">
+                        <User2 className="text-gray-700 dark:text-gray-300 w-6 h-6" />
+                        <h4 className="font-semibold text-gray-800 dark:text-white text-lg">
+                          {session.user.name}
+                        </h4>
+                      </div>
+                      <span className="text-xs text-gray-500 dark:text-gray-400">
+                        {session.user.email}
+                      </span>
+                    </div>
+                  </div>
+                )}
 
                 {session ? (
                   <>
@@ -138,22 +175,14 @@ export const Navbar = () => {
                     </li>
                   </>
                 )}
+                {session?.user.role == "ADMIN" && (
+                  <>
+                    <Button className="bg-ubepsa" asChild>
+                      <Link href={"/admin"}>Admin</Link>
+                    </Button>
+                  </>
+                )}
               </ul>
-              {session && (
-                <div className="m-5 p-4 rounded-lg shadow-md bg-gray-100 dark:bg-[#0b3d50] hover:shadow-lg transition-shadow duration-300">
-                  <div className="leading-4 flex flex-col space-y-2">
-                    <div className="flex items-center space-x-3">
-                      <User2 className="text-gray-700 dark:text-gray-300 w-6 h-6" />
-                      <h4 className="font-semibold text-gray-800 dark:text-white text-lg">
-                        {session.user.name}
-                      </h4>
-                    </div>
-                    <span className="text-xs text-gray-500 dark:text-gray-400">
-                      {session.user.email}
-                    </span>
-                  </div>
-                </div>
-              )}
             </div>
           </div>
         </div>
